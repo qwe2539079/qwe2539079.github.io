@@ -1,0 +1,353 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>MySQL主从同步配置 | 、Struggle</title><meta name="author" content="、Struggle"><meta name="copyright" content="、Struggle"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="基本知识为什么要使用主从同步？若是你的项目只有一个数据库，一旦数据库宕机，导致业务停顿就会产生很大的危害，就会出现单点问题。为了让系统高可用，避免单点问题就可以使用主从方式，采用一主多从的方法，主从之间进行数据同步。  单点问题：系统中出现一点失效，就会让整个系统无法运作部件。单点故障会造成整体故障。  实际举例：负载均衡描述：例如来了10000个请求，其中有1000个写请求，有9000个读请求，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL主从同步配置">
+<meta property="og:url" content="https://qwe2539079.github.io/2024/03/15/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/MySQL%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E9%85%8D%E7%BD%AE/index.html">
+<meta property="og:site_name" content="、Struggle">
+<meta property="og:description" content="基本知识为什么要使用主从同步？若是你的项目只有一个数据库，一旦数据库宕机，导致业务停顿就会产生很大的危害，就会出现单点问题。为了让系统高可用，避免单点问题就可以使用主从方式，采用一主多从的方法，主从之间进行数据同步。  单点问题：系统中出现一点失效，就会让整个系统无法运作部件。单点故障会造成整体故障。  实际举例：负载均衡描述：例如来了10000个请求，其中有1000个写请求，有9000个读请求，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/qwe2539079/images/raw/master/img/202403151636160.jpg">
+<meta property="article:published_time" content="2024-03-15T07:01:01.941Z">
+<meta property="article:modified_time" content="2024-03-15T07:55:42.411Z">
+<meta property="article:author" content="、Struggle">
+<meta property="article:tag" content="开发、技术分享、Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/qwe2539079/images/raw/master/img/202403151636160.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://qwe2539079.github.io/2024/03/15/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/MySQL%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E9%85%8D%E7%BD%AE/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'MySQL主从同步配置',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-03-15 15:55:42'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://gitee.com/qwe2539079/images/raw/master/img/202403151636160.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">4</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="、Struggle"></a></span><div id="menus"><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">MySQL主从同步配置</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-03-15T07:01:01.941Z" title="发表于 2024-03-15 15:01:01">2024-03-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-03-15T07:55:42.411Z" title="更新于 2024-03-15 15:55:42">2024-03-15</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="MySQL主从同步配置"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="基本知识"><a href="#基本知识" class="headerlink" title="基本知识"></a>基本知识</h1><p><strong>为什么要使用主从同步</strong>？若是你的项目只有一个数据库，一旦数据库宕机，导致业务停顿就会产生很大的危害，就会出现单点问题。为了让系统高可用，避免单点问题就可以使用主从方式，采用一主多从的方法，主从之间进行数据同步。</p>
+<ul>
+<li><p><code>单点问题</code>：系统中出现一点失效，就会让整个系统无法运作部件。单点故障会造成整体故障。</p>
+</li>
+<li><p><strong>实际举例</strong>：负载均衡描述：例如来了10000个请求，其中有1000个写请求，有9000个读请求，将写请求分配到主服务器进行写操作，将其他9000个读请求均衡分布给多个从服务器进行读。</p>
+</li>
+</ul>
+<p><strong>扩展</strong>：主从方式另一个目的是进行读写分离，让主服务器数据库进行更新操作即写，查询操作交由从服务器数据库进行！</p>
+<hr>
+<h2 id="1-1、什么是主从同步？"><a href="#1-1、什么是主从同步？" class="headerlink" title="1.1、什么是主从同步？"></a>1.1、什么是主从同步？</h2><p>主：master</p>
+<p>从：slave</p>
+<p><strong>解释</strong>：一台服务器充当主服务器，一条及以上服务器充当从服务器。主数据库的数据会自动复制到从服务器中(一旦主机有更新操作，从机就能够立马感知，并且从主机上将数据复制下来 )。</p>
+<p>针对于多级复制，服务器既可充当主服务器也可充当从服务器。</p>
+<p><strong>主从复制的基础</strong>就是主服务器对数据进行修改记录二进制文件，从服务器根据主服务器的二进制文件来进行同步更新操作。</p>
+<p>好处：帮助备份数据，读写分离。分布式中多主多从。数据库服务器可以互为主从。</p>
+<hr>
+<h2 id="1-2、原理分析"><a href="#1-2、原理分析" class="headerlink" title="1.2、原理分析"></a>1.2、原理分析</h2><p><img src="https://tcs-devops.aliyuncs.com/storage/112qc0196507204b5c0b053b0e8efaa05255?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnFjMDE5NjUwNzIwNGI1YzBiMDUzYjBlOGVmYWEwNTI1NSJ9.cWwso_Rw5x9-VahhDXzmuerjSWAi7epxSJVU27GugTo&download=image.png"></p>
+<p><strong>过程描述</strong>：master服务器会将执行的操作记录到binlog日志中，slave服务器通过配置主服务器的登陆账户，binlog的指定位置之后通过一个I&#x2F;O线程连接到master服务器，将获取到的binlog日志存储到自己relay log日志中，接着会有一个sql线程去检查relay log日志是否变化，若是变化就进行更新操作，完成同步！</p>
+<p><strong>简略步骤</strong>：</p>
+<ol>
+<li><p>Master数据库只要发生变化，就会立即记录到Binary log日志文件中。</p>
+</li>
+<li><p>Slave数据库启动一个I&#x2F;O thread连接到Master数据库，请求Master变化的二进制文件(binlog)。</p>
+</li>
+<li><p>Slave I&#x2F;O线程获取到的二进制日志会保存到自己的relay log日志里。</p>
+</li>
+<li><p>Slave 有一个SQL线程会定时检查Relay log是否发生变化，若是变化就更新数据。</p>
+</li>
+</ol>
+<hr>
+<h2 id="1-3、MySQL配置主从的特点"><a href="#1-3、MySQL配置主从的特点" class="headerlink" title="1.3、MySQL配置主从的特点"></a>1.3、<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=MySQL%E9%85%8D%E7%BD%AE&spm=1001.2101.3001.7020">MySQL配置</a>主从的特点</h2><p>1、<strong>实现服务器负载均衡</strong>：通过在主服务器和从服务器之间切分处理客户查询的负荷，从而得到更好的客户相应时间。一般有两种思路：</p>
+<ul>
+<li><p>第一种思路就是主服务器只会进行更新操作，对于查询操作都会交由从服务器执行(设置多台从服务器)，这种是针对于查多改少。</p>
+</li>
+<li><p>第二种思路就是主服务器上与从服务器切分查询，主服务器不仅要完成更新操作还附带一些查询工作，对于从服务器只用来查询，一旦主服务器比较忙时，部分查询会自动发送到从服务器中，减轻主服务器的负荷。</p>
+</li>
+</ul>
+<p>2、<strong>通过复制实现数据的异地备份</strong>：主要是用来进行备份数据操作，避免服务器出现损坏等恶意破坏问题。</p>
+<p>3、<strong>提高数据库系统的可用性</strong>：一旦主服务器发生故障，可以让从服务器来充当主服务器继续进行工作，像许多银行系统升级，在升级过程中只能查询不能取钱就是一样的道理。</p>
+<hr>
+<h1 id="二、实操"><a href="#二、实操" class="headerlink" title="二、实操"></a>二、实操</h1><h2 id="环境背景"><a href="#环境背景" class="headerlink" title="环境背景"></a>环境背景</h2><p>虚拟机中两个<code>Centos 7.8</code>系统，数据库版本为<code>5.7.32</code>。</p>
+<hr>
+<h2 id="前提准备"><a href="#前提准备" class="headerlink" title="前提准备"></a>前提准备</h2><p>一般模拟测试是在虚拟机上使用两个mysql进行主从复制demo试验的。</p>
+<p>下面是我准备的主从服务器，分别装有一个mysql：</p>
+<p><img src="https://tcs-devops.aliyuncs.com/storage/112qfcc415b93bba61495f3ae5de1b1c02f5?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnFmY2M0MTViOTNiYmE2MTQ5NWYzYWU1ZGUxYjFjMDJmNSJ9.KVurWhiehekzxxexYv5R2VtrAs3h-2Uqo-BO2-nZ4C8&download=image.png"></p>
+<ul>
+<li>克隆了一个虚拟机来进行测试！</li>
+</ul>
+<p><code>Navicat</code>也准备就绪：</p>
+<p><img src="https://tcs-devops.aliyuncs.com/storage/112q391d6e82a2a78ee7a2798a367c867844?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnEzOTFkNmU4MmEyYTc4ZWU3YTI3OThhMzY3Yzg2Nzg0NCJ9.WTOVjDraEKT7_pcc4v9iyMpfCQ3l8-B8BqXPQm5YqVA&download=image.png"></p>
+<p>两个服务器的mysql账号信息如下：shell登陆统一用户名为root，密码是123456</p>
+<figure class="highlight sql"><figcaption><span>has</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">主：<span class="number">192.168</span><span class="number">.181</span><span class="number">.129</span>:<span class="number">3306</span></span><br><span class="line">	数据库账号：cl <span class="number">123456</span>     权限账户(分配给从服务器登陆)：repl ro<span class="operator">*</span>ot1<span class="operator">%</span><span class="number">23</span><span class="operator">&amp;</span><span class="number">45</span></span><br><span class="line">从：<span class="number">192.168</span><span class="number">.181</span><span class="number">.131</span>:<span class="number">3306</span></span><br><span class="line">	数据库账号：root <span class="number">123456</span></span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<h2 id="主从同步思路"><a href="#主从同步思路" class="headerlink" title="主从同步思路"></a>主从同步思路</h2><p>主服务器需要配置一个二进制日志bin log，启动它。开放一个用户账号给从服务器，该用户有主从同步的权限</p>
+<p>从服务器要订阅这个bin log日志(通过主服务器开放的一个账号来去订阅)，并且开启relay log日志</p>
+<hr>
+<h2 id="1、主从服务器进行配置"><a href="#1、主从服务器进行配置" class="headerlink" title="1、主从服务器进行配置"></a>1、主从服务器进行配置</h2><blockquote>
+<p>主服务器</p>
+</blockquote>
+<p>主服务器配置：<code>/etc/my.cnf</code>中添加即可</p>
+<blockquote>
+<p>docker中的配置文件在&#x2F;etc&#x2F;mysql&#x2F;mysql.conf.d&#x2F;mysqld.cnf</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># mysql master config </span><br><span class="line"># [mysqld]  # 若是配置文件中有就不带</span><br><span class="line">server-id = 1 # 节点ID，确保唯一,用来区分服务器的编号</span><br><span class="line"># log config </span><br><span class="line">log-bin = master-bin #开启mysql的binlog日志功能(就会创建二进制文件)</span><br><span class="line">sync_binlog = 1 #控制数据库的binlog刷到磁盘上去 , 0 不控制，性能最好，1每次 事物提交都会刷到日志文件中，性能最差，最安全 </span><br><span class="line">binlog_format = mixed #binlog日志格式，mysql默认采用statement，建议使用mixed </span><br><span class="line">expire_logs_days = 7  #binlog过期清理时间 </span><br><span class="line">max_binlog_size = 100m  #binlog每个日志文件大小 </span><br><span class="line">binlog_cache_size = 4m  #binlog缓存大小 </span><br><span class="line">max_binlog_cache_size= 512m  #最大binlog缓存大 </span><br><span class="line">binlog-ignore-db=mysql #不生成日志文件的数据库，多个忽略数据库可以用逗号拼接，或者 复制 这句话，写多行 </span><br><span class="line"></span><br><span class="line">auto-increment-offset = 1 # 自增值的偏移量 </span><br><span class="line">auto-increment-increment = 1 # 自增值的自增量 </span><br><span class="line">slave-skip-errors = all #跳过从库错误</span><br></pre></td></tr></table></figure>
+
+<p>重要的就是3、5行的内容，一个是对服务器进行编号，另一个是开启binlog日志。其他的就是辅助配置，不配置也会有默认值。</p>
+<p>重启mysql服务器：<code>systemctl restart mysqld</code>查看master配置信息(需进入mysql命令行)：<code>show master status</code>，获取到binlog文件名称以及偏移量，之后从服务器配置应当按照主服务器来，这样才能找到binlog位置。</p>
+<blockquote>
+<p>从服务器配置</p>
+</blockquote>
+<p>从服务器配置：依旧是在<code>/etc/my.cnf</code>中添加即可</p>
+<p>配置信息如下：</p>
+<figure class="highlight sql"><figcaption><span>has</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># [mysqld] </span><br><span class="line">server<span class="operator">-</span>id<span class="operator">=</span><span class="number">2</span> </span><br><span class="line">log<span class="operator">-</span>bin<span class="operator">=</span>mysql<span class="operator">-</span>bin </span><br><span class="line">relay<span class="operator">-</span>log<span class="operator">=</span>mysql<span class="operator">-</span>relay<span class="operator">-</span>bin </span><br><span class="line"># 忽略复制的文件，这几个数据库不需要进行同步</span><br><span class="line">replicate<span class="operator">-</span>wild<span class="operator">-</span>ignore<span class="operator">-</span><span class="keyword">table</span><span class="operator">=</span>mysql.<span class="operator">%</span> </span><br><span class="line">replicate<span class="operator">-</span>wild<span class="operator">-</span>ignore<span class="operator">-</span><span class="keyword">table</span><span class="operator">=</span>test.<span class="operator">%</span> </span><br><span class="line">replicate<span class="operator">-</span>wild<span class="operator">-</span>ignore<span class="operator">-</span><span class="keyword">table</span><span class="operator">=</span>information_schema.<span class="operator">%</span></span><br></pre></td></tr></table></figure>
+
+<p>对于从重要的就是第2、4行，第一个是服务器编号，第二个是开启relay log日志(中继日志)。</p>
+<p>同样配置好之后，重启mysql的服务！</p>
+<h3 id="配置说明"><a href="#配置说明" class="headerlink" title="配置说明"></a>配置说明</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">--replicate-ignore-db=db_name</span><br><span class="line">--replicate-ignore-table=db_name.tbl_name</span><br><span class="line">--replicate-do-db=db_name</span><br><span class="line">--replicate-do-table=db_name.tbl_name</span><br><span class="line">--replicate-wild-do-table=db_name.tbl_name</span><br><span class="line">--replicate-wild-ignore-table=db_name.tbl_name</span><br><span class="line">--replicate-rewrite-db=from_name-&gt;to_name</span><br><span class="line"></span><br><span class="line">replicate-ignore-db 忽略某些库的binlog 日志应用。</span><br><span class="line">replicate-ignore-table 忽略某些表的binlog 日志应用。</span><br><span class="line">replicate-do-db 应用某些库的binlog 日志。</span><br><span class="line">replicate-do-table 应用某些表的binlog 日志。</span><br><span class="line">replicate-wild-do-table 使用通配符来匹配那些应用binlog日志的表。</span><br><span class="line">replicate-wild-ignore-table 使用通配符来匹配那些不能应用binlog日志的表。</span><br><span class="line">replicate-rewrite-db，能够实现主库与从库数据库名称不同的复制，比如主库数据库名为A，从库数据库名为B，实现主库A到从库B的复制。</span><br></pre></td></tr></table></figure>
+
+<p>以上这些参数同样不能动态修改，需要重启MySQL生效。在show global variables 的结果中也无法显示这些参数。</p>
+<h3 id="动态设置过滤条件"><a href="#动态设置过滤条件" class="headerlink" title="动态设置过滤条件"></a><strong>动态设置过滤条件</strong></h3><p>MySQL提供了另外一种动态设置从库的复制过滤条件的方式，CHANGE REPLICATION FILTER 语法，设置前先停止复制的SQL线程，设置完成后，再开启SQL线程。具体语法如下</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">CHANGE REPLICATION <span class="keyword">FILTER</span> <span class="keyword">filter</span> [, <span class="keyword">filter</span>][, ...] </span><br><span class="line"></span><br><span class="line"><span class="keyword">filter</span>: </span><br><span class="line">    REPLICATE_DO_DB <span class="operator">=</span> (db_list) </span><br><span class="line"><span class="operator">|</span>   REPLICATE_IGNORE_DB <span class="operator">=</span> (db_list) </span><br><span class="line"><span class="operator">|</span>   REPLICATE_DO_TABLE <span class="operator">=</span> (tbl_list) </span><br><span class="line"><span class="operator">|</span>   REPLICATE_IGNORE_TABLE <span class="operator">=</span> (tbl_list) </span><br><span class="line"><span class="operator">|</span>   REPLICATE_WILD_DO_TABLE <span class="operator">=</span> (wild_tbl_list) </span><br><span class="line"><span class="operator">|</span>   REPLICATE_WILD_IGNORE_TABLE <span class="operator">=</span> (wild_tbl_list) </span><br><span class="line"><span class="operator">|</span>   REPLICATE_REWRITE_DB <span class="operator">=</span> (db_pair_list) </span><br><span class="line"></span><br><span class="line">db_list: </span><br><span class="line">    db_name[, db_name][, ...] </span><br><span class="line"></span><br><span class="line">tbl_list: </span><br><span class="line">    db_name.table_name[, db_table_name][, ...] </span><br><span class="line">    </span><br><span class="line">wild_tbl_list: </span><br><span class="line">    <span class="string">&#x27;db_pattern.table_pattern&#x27;</span>[, <span class="string">&#x27;db_pattern.table_pattern&#x27;</span>][, ...] </span><br><span class="line">    </span><br><span class="line">db_pair_list: </span><br><span class="line">    (db_pair)[, (db_pair)][, ...] </span><br><span class="line"></span><br><span class="line">db_pair: </span><br><span class="line">    from_db, to_db</span><br></pre></td></tr></table></figure>
+
+<p>比如，下面只复制库名为db1和db2中的表：</p>
+<p>CHANGE REPLICATION FILTER REPLICATE_DO_DB &#x3D; (db1, db2);</p>
+<p>比如，下面同步db1.t1开头的表，过滤db1.t2开头的表</p>
+<p>CHANGE REPLICATION FILTER</p>
+<p>REPLICATE_WILD_DO_TABLE &#x3D; (‘db1.t1%’),</p>
+<p>REPLICATE_WILD_IGNORE_TABLE &#x3D; (‘db1.t2%’);</p>
+<h3 id="关于复制过滤，有几点需要额外注意："><a href="#关于复制过滤，有几点需要额外注意：" class="headerlink" title="关于复制过滤，有几点需要额外注意："></a><strong>关于复制过滤，有几点需要额外注意：</strong></h3><p>（1）如果一个binlog事务里有多个SQL，其中涉及到过滤库名或者表名的SQL将被过滤，不涉及到的则仍然执行。举例如下：</p>
+<p>比如主库执行：</p>
+<p>begin;</p>
+<p>insert into db1.tb1 values(1);</p>
+<p>insert into db2.tb2 values(2);</p>
+<p>commit;</p>
+<p>从库设置</p>
+<p>CHANGE REPLICATION FILTER REPLICATE_IGNORE_DB &#x3D; (<strong>db1</strong>);</p>
+<p>从库执行的事务变成如下：</p>
+<p>begin;</p>
+<p>insert into db2.tb2 values(2);</p>
+<p>commit;</p>
+<p>（2）如果事务中的所有SQL都是被过滤的，那么从库就会变成执行一个空事务。</p>
+<p>比如主库执行：</p>
+<p>begin;</p>
+<p>insert into <strong>db1</strong>.tb1 values(1);</p>
+<p>insert into <strong>db1</strong>.tb2 values(2);</p>
+<p>commit;</p>
+<p>从库设置</p>
+<p>CHANGE REPLICATION FILTER REPLICATE_IGNORE_DB &#x3D; (<strong>db1</strong>);</p>
+<p>从库执行的事务变成如下：</p>
+<p>begin;</p>
+<p>commit;</p>
+<p>（3）过滤是全局设置的，如果使用channel多通道复制，那么所有通道的复制过滤都是一样的。MySQL 8.0 对这个问题进行了改进，能够对某个通道单独指定复制过滤规则。</p>
+<p>3 binlog_format为statement</p>
+<p>对于binlog格式为statement时，过滤db的逻辑与row格式不太一样，判断sql是否属于某个db，与use db相关。比如下面这个例子，目的是想要将涉及db1的SQL不写入binlog，结果却与预想不一样。</p>
+<p><strong>设置：</strong></p>
+<p>–binlog-ignore-db&#x3D;<strong>db1</strong></p>
+<p><strong>执行SQL：</strong></p>
+<p>use <strong>db2</strong>;</p>
+<p>update <strong>db1</strong>.tb set name&#x3D;’123’ where id&#x3D;1;</p>
+<p>对db1中的表做了修改，该修改本来是想忽略，不记录binlog，但结果仍然记录在binlog里，原因就是use db2导致。</p>
+<hr>
+<h2 id="2、主服务器创建用户账号-用于从服务器订阅"><a href="#2、主服务器创建用户账号-用于从服务器订阅" class="headerlink" title="2、主服务器创建用户账号(用于从服务器订阅)"></a>2、主服务器创建用户账号(用于从服务器订阅)</h2><p><strong>主服务器提供一个用户账号</strong>用来进行主从同步的：主要需要规范的就是主机地址以及服务器权限选择复制从</p>
+<p><img src="https://tcs-devops.aliyuncs.com/storage/112qdf252d1a7d257fa80c9aef816ad637b7?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnFkZjI1MmQxYTdkMjU3ZmE4MGM5YWVmODE2YWQ2MzdiNyJ9.iW_ysL17My-x2e76cfWvCpLuyCjoQUUcQcHJpUY1blE&download=image.png"></p>
+<figure class="highlight sql"><figcaption><span>has</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">repl  <span class="comment">-- 用户名</span></span><br><span class="line">ro<span class="operator">*</span>ot1<span class="operator">%</span><span class="number">23</span><span class="operator">&amp;</span><span class="number">45</span>  <span class="comment">-- 密码</span></span><br></pre></td></tr></table></figure>
+
+<p>账号权限设置为复制从：</p>
+<p><img src="https://tcs-devops.aliyuncs.com/storage/112qed17f7d29a33bd623649d6e6107899d0?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnFlZDE3ZjdkMjlhMzNiZDYyMzY0OWQ2ZTYxMDc4OTlkMCJ9.xuECEqMfTlQjBGJBsDvqkQoiUDVNebeCTYwuMk5kq0o&download=image.png"></p>
+<p>若是显示密码弱，可以修改一下密码设置策略再进行修改。</p>
+<p>接着我们来尝试在从服务器上进行登陆该账号进行测试：</p>
+<p><img src="https://tcs-devops.aliyuncs.com/storage/112q58e87e1836f182adce72cb5a3c97ae69?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnE1OGU4N2UxODM2ZjE4MmFkY2U3MmNiNWEzYzk3YWU2OSJ9.XTBWNEIa5lAbSVSDkbpQ2OTo81PwSiVvoAd1eoSIrKQ&download=image.png"></p>
+<hr>
+<h2 id="3、配置从库信息-从服务器数据库"><a href="#3、配置从库信息-从服务器数据库" class="headerlink" title="3、配置从库信息(从服务器数据库)"></a>3、配置从库信息(从服务器数据库)</h2><p>查看一下<strong>主服务器</strong>中的master的状态：<code>show master status</code></p>
+<p><img src="https://tcs-devops.aliyuncs.com/storage/112q7b8dfd0aaa025a35808649420a571320?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnE3YjhkZmQwYWFhMDI1YTM1ODA4NjQ5NDIwYTU3MTMyMCJ9.bXn6RwyJWtfOAAfkpY2mLByjMj5jkAwDxTy_7yguGiU&download=image.png"></p>
+<ul>
+<li>获取到其中的两个关键参数，<code>File</code>(文件名)以及<code>position</code>(偏移量)</li>
+</ul>
+<p>进入到<strong>从服务器</strong>中的<code>mysql</code>命令行下进行下面配置：即用于登陆订阅主服务器的账号信息以及binlog文件名、偏移量</p>
+<figure class="highlight bash"><figcaption><span>has</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CHANGE MASTER TO </span><br><span class="line">MASTER_HOST = <span class="string">&#x27;192.168.181.129&#x27;</span>,  </span><br><span class="line">MASTER_USER = <span class="string">&#x27;repl&#x27;</span>, </span><br><span class="line">MASTER_PASSWORD = <span class="string">&#x27;ro*ot1%23&amp;45&#x27;</span>,</span><br><span class="line">MASTER_PORT = 3306,</span><br><span class="line">MASTER_LOG_FILE=<span class="string">&#x27;master-bin.000001&#x27;</span>,</span><br><span class="line">MASTER_LOG_POS=663,</span><br><span class="line">MASTER_RETRY_COUNT = 60,</span><br><span class="line">MASTER_HEARTBEAT_PERIOD = 10000; </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tcs-devops.aliyuncs.com/storage/112q4d4498cd4c3235d582e52ff67a5d7e4a?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnE0ZDQ0OThjZDRjMzIzNWQ1ODJlNTJmZjY3YTVkN2U0YSJ9.3Ul-d3Y3xPAHOzEKdG5Rb3sVqyl09wiVhbu8iNMia94&download=image.png"></p>
+<p>注释信息(对配置内容进行说明)：</p>
+<figure class="highlight sql"><figcaption><span>has</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">MASTER_HOST <span class="operator">=</span> <span class="string">&#x27;192.168.181.129&#x27;</span>,     # 目标服务器(即主服务器)的主机地址</span><br><span class="line">MASTER_USER <span class="operator">=</span> <span class="string">&#x27;repl&#x27;</span>,       # 登陆主服务器的用户名</span><br><span class="line">MASTER_PASSWORD <span class="operator">=</span> <span class="string">&#x27;ro*ot1%23&amp;45&#x27;</span>, # 登陆主服务器的密码</span><br><span class="line">MASTER_PORT <span class="operator">=</span> <span class="number">3306</span>,              # 主服务器开放mysql的端口</span><br><span class="line"># 下面两个是在主服务器中查询到的，使用<span class="keyword">show</span> master status查询</span><br><span class="line">MASTER_LOG_FILE<span class="operator">=</span><span class="string">&#x27;master-bin.000001&#x27;</span>,</span><br><span class="line">MASTER_LOG_POS<span class="operator">=</span><span class="number">663</span>,</span><br><span class="line"># MASTER_LOG_FILE<span class="operator">=</span><span class="string">&#x27;mysql-bin.000005&#x27;</span>,#与主库File 保持一致</span><br><span class="line"># MASTER_LOG_POS<span class="operator">=</span><span class="number">120</span> , #与主库Position 保持一致</span><br><span class="line"># 额外配置信息</span><br><span class="line">MASTER_RETRY_COUNT <span class="operator">=</span> <span class="number">60</span>,</span><br><span class="line">MASTER_HEARTBEAT_PERIOD <span class="operator">=</span> <span class="number">10000</span>; </span><br></pre></td></tr></table></figure>
+
+<p>依旧是在mysql命令行使用命令开启从服务器，并且可以查看一下状态：</p>
+<figure class="highlight sql"><figcaption><span>has</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">start</span> slave;  # 开启从服务器(服从)  # 关闭从服务器 stop slave</span><br><span class="line"><span class="keyword">show</span> slave status;  # 查看从服务器的状态</span><br></pre></td></tr></table></figure>
+
+<p>若是下面两个部分都是yes表示主从同步已经成功开启！</p>
+<p><img src="https://tcs-devops.aliyuncs.com/storage/112q9fbf553cc31b119143b5f987fa0c7234?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnE5ZmJmNTUzY2MzMWIxMTkxNDNiNWY5ODdmYTBjNzIzNCJ9.RLWE5S8wIOWrrgtZc_CmPhsKhOLcINt3-AzNQf5nwp4&download=image.png"></p>
+<p><strong>额外说明</strong>：若是slave_io_running为no的话最好去看一下<code>Last_IO_Error</code>提示的错误信息。</p>
+<hr>
+<h2 id="主从同步效果演示"><a href="#主从同步效果演示" class="headerlink" title="主从同步效果演示"></a>主从同步效果演示</h2><p><strong>创建数据库同步</strong>：</p>
+<p><img src="https://tcs-devops.aliyuncs.com/storage/112q53e87c917c8eb3ccf868da0c324d4c7f?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnE1M2U4N2M5MTdjOGViM2NjZjg2OGRhMGMzMjRkNGM3ZiJ9.yV_f-59n47Jfsb0yG1RhAMnKk7PTorT10F6wckaXiFU&download=image.png"></p>
+<p><strong>创建数据库表</strong>：</p>
+<p><img src="https://tcs-devops.aliyuncs.com/storage/112qc1aa83f08557c24ddc72463e9b746154?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnFjMWFhODNmMDg1NTdjMjRkZGM3MjQ2M2U5Yjc0NjE1NCJ9.K5ruT3KwKSDqyli8_z_DeQPyU4qUPBhkG6gsDk7we3g&download=image.png"></p>
+<p><strong>新增表记录</strong>：</p>
+<p><img src="https://tcs-devops.aliyuncs.com/storage/112qa5f8afac5ef8b854ea266cb9b704ab1b?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnFhNWY4YWZhYzVlZjhiODU0ZWEyNjZjYjliNzA0YWIxYiJ9.Kpiju59ytBh8xbl_FNGT7CZw2sMNOwhHRKD_JPlcyRY&download=image.png"></p>
+<hr>
+<h2 id="主从小注意点"><a href="#主从小注意点" class="headerlink" title="主从小注意点"></a>主从小注意点</h2><p>1、若是<code>start slave</code>失败了，可以重置一下使用命令reset slave。</p>
+<p>2、保持主从同步，需要确定你的主服务器与你的从服务器binlog日志文件名是否相同以及偏移量是否一致。查看主服务器的master信息使用命令<code>show master status</code>。查看从服务器的slave信息使用命令<code>show slave status;</code>若是出现不一致情况，最好就是重新对从服务器数据库重新配置一下，流程：关闭-修改-启动，查看状态是否启动成功！</p>
+<p>3、主服务器创建test数据库，从服务器不会进行同步。</p>
+<hr>
+<h1 id="三、问题：show-slave-status时从服务器的slave-IO-running为no"><a href="#三、问题：show-slave-status时从服务器的slave-IO-running为no" class="headerlink" title="三、问题：show slave status时从服务器的slave_IO_running为no"></a>三、问题：show slave status时从服务器的slave_IO_running为no</h1><h2 id="分析问题"><a href="#分析问题" class="headerlink" title="分析问题"></a>分析问题</h2><p>Slave_IO_Running为No，若是主从服务正确开启应该是yes</p>
+<p><img src="https://tcs-devops.aliyuncs.com/storage/112q057a8785dcb05b0ed18ffffb6d472e51?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnEwNTdhODc4NWRjYjA1YjBlZDE4ZmZmZmI2ZDQ3MmU1MSJ9.fHFCSLbao2oRInNIyxK7yLMnKs-9wRpOEmqz5_8njUc&download=image.png"></p>
+<p>如何查看错误信息呢？可以看其中的<code>Last_IO_Error</code>信息</p>
+<p><img src="https://tcs-devops.aliyuncs.com/storage/112qd7f48f4af26d2aeed8334a283f867a71?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnFkN2Y0OGY0YWYyNmQyYWVlZDgzMzRhMjgzZjg2N2E3MSJ9.gu2qAKsT0bzm5Qeita4lJA3Z5_aTtcEiEUXESGVl99I&download=image.png"></p>
+<hr>
+<h2 id="错误1：slave-failed-to-initalize-relay-log-info-structure"><a href="#错误1：slave-failed-to-initalize-relay-log-info-structure" class="headerlink" title="错误1：slave failed to initalize relay log info structure"></a>错误1：slave failed to initalize relay log info structure</h2><p><img src="https://tcs-devops.aliyuncs.com/storage/112q71f8bdce90877d4ae15187c3129aa7e6?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnE3MWY4YmRjZTkwODc3ZDRhZTE1MTg3YzMxMjlhYTdlNiJ9.-2rX6q7TZKZwlgTAja1DjEbgi1FsRT2HfLhUnZQCfxA&download=image.png"></p>
+<p>可以去查看一下从服务器中的mysql的日志文件夹：<code>/var/lib/mysql</code></p>
+<p><img src="https://tcs-devops.aliyuncs.com/storage/112q09c595cd6578fd9c024461c2db69342d?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnEwOWM1OTVjZDY1NzhmZDljMDI0NDYxYzJkYjY5MzQyZCJ9.4Kb8xalak2HHzdwdyJE-jL4p8xDtAFFagKNd8Znk0t8&download=image.png"></p>
+<ul>
+<li>该图是正确的没有多余的情况，仅作演示。</li>
+</ul>
+<p><strong>原因描述</strong>：确保中继日志是我们配置的，避免重复的情况，也许是之前配的。</p>
+<p><strong>解决方案</strong>：将相关的relay-bin文件直接删除，重新配置从服务器。接着重新<code>start slave;</code>，继续查看状态。若是还是不行，需要你执行<code>reset slave;</code>重置从库。</p>
+<hr>
+<h2 id="错误2：Fatal-error-The-slave-I-O-thread-stops-because-master-and-slave-have-equal-MySQL-server-UUIDs-these-UUIDs-must-be-different-for-replication-to-work"><a href="#错误2：Fatal-error-The-slave-I-O-thread-stops-because-master-and-slave-have-equal-MySQL-server-UUIDs-these-UUIDs-must-be-different-for-replication-to-work" class="headerlink" title="错误2：Fatal error: The slave I&#x2F;O thread stops because master and slave have equal MySQL server UUIDs; these UUIDs must be different for replication to work."></a>错误2：Fatal error: The slave I&#x2F;O thread stops because master and slave have equal MySQL server UUIDs; these UUIDs must be different for replication to work.</h2><p><strong>问题分析</strong>：我们在虚拟机中创建的第二个linux系统实际上是进行克隆的，他们的server uuid是相同的，修改任意一个即可。</p>
+<p><img src="https://tcs-devops.aliyuncs.com/storage/112qc46c5fc281cfe0beafa5208d0067e57f?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnFjNDZjNWZjMjgxY2ZlMGJlYWZhNTIwOGQwMDY3ZTU3ZiJ9.AzAfs0wxQXu9h4fFtiopAtBjICSmBhvU8YJfSVJn-W8&download=image.png"></p>
+<p><strong>解决方案</strong>：</p>
+<p>查看auto.cnf配置文件中的server-uuid：<code>vim /var/lib/mysql/auto.cnf</code>，可以发现两个服务器的uuid是一致的。</p>
+<p><img src="https://tcs-devops.aliyuncs.com/storage/112q0a3b23fec851fe477647141c603c4f6b?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnEwYTNiMjNmZWM4NTFmZTQ3NzY0NzE0MWM2MDNjNGY2YiJ9.Z_U7XRFkOmUFgk93J_gK2pjGguFwD4mCnlBmsOZQY4s&download=image.png"></p>
+<p>我们自己生成一个<code>uuid</code>，对从服务器的配置文件进行修改即可。</p>
+<p>接着重启mysql服务！重新查看状态即可解决。</p>
+<hr>
+<h2 id="错误3：MySQL-Master-command-COM-REGISTER-SLAVE-failed-Access-denied-for-user"><a href="#错误3：MySQL-Master-command-COM-REGISTER-SLAVE-failed-Access-denied-for-user" class="headerlink" title="错误3：MySQL Master command COM_REGISTER_SLAVE failed: Access denied for user"></a>错误3：MySQL Master command COM_REGISTER_SLAVE failed: Access denied for user</h2><blockquote>
+<p>参考文章：<a target="_blank" rel="noopener" href="https://www.codeleading.com/article/46752430555/">MySQL Master command COM_REGISTER_SLAVE failed: Access denied for user</a></p>
+</blockquote>
+<p><strong>问题描述</strong>：</p>
+<p><img src="https://tcs-devops.aliyuncs.com/storage/112qf83f611c5804463418774fed55cefe62?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnFmODNmNjExYzU4MDQ0NjM0MTg3NzRmZWQ1NWNlZmU2MiJ9._5ZH1t2jymakGrKDdsh8iOZ4BP2nw_80tc0X46EcUnE&download=image.png"></p>
+<p><strong>解决方案</strong>：</p>
+<p>查看一下指定账户的权限：<code>show grants for repl@&#39;192.168.181.131&#39;</code></p>
+<p><img src="https://tcs-devops.aliyuncs.com/storage/112qfc08a8c0a1b939cbfb99aa3d2d9daca6?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnFmYzA4YThjMGExYjkzOWNiZmI5OWFhM2QyZDlkYWNhNiJ9.uKpFIPeM__qSrktR6PvVQPIBNrfEmZADkbZKvrxDZ-8&download=image.png"></p>
+<p>通过xshell或者navicat来进行修改权限：<code>GRANT REPLICATION SLAVE ON *.* TO repl@&#39;192.168.181.131&#39; identified by &#39;ro*ot1%23&amp;45&#39;;</code>。</p>
+<p>刷新权限：<code>FLUSH PRIVILEGES;</code></p>
+<p><img src="https://tcs-devops.aliyuncs.com/storage/112q9dbb63aab48ecadd75cee2c985198668?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9hcHBJZCI6IjVlNzQ4MmQ2MjE1MjJiZDVjN2Y5YjMzNSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTA5MDQ2NCwiaWF0IjoxNzEwNDg1NjY0LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzExMnE5ZGJiNjNhYWI0OGVjYWRkNzVjZWUyYzk4NTE5ODY2OCJ9.ulDDj13LtOiY7n8Kd6MF2sR10TMzOs0Hc8lHKT2YIwU&download=image.png"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://qwe2539079.github.io">、Struggle</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://qwe2539079.github.io/2024/03/15/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/MySQL%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E9%85%8D%E7%BD%AE/">https://qwe2539079.github.io/2024/03/15/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/MySQL%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E9%85%8D%E7%BD%AE/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://qwe2539079.github.io" target="_blank">、Struggle</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/03/15/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/Docker%E4%B8%ADMysql%E8%BF%9E%E6%8E%A5%E5%BE%88%E6%85%A2%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/" title="Docker中Mysql连接很慢问题解决"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Docker中Mysql连接很慢问题解决</div></div></a></div><div class="next-post pull-right"><a href="/2024/03/15/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/MySQL%E6%9C%8D%E5%8A%A1%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" title="MySQL服务性能优化"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">MySQL服务性能优化</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://gitee.com/qwe2539079/images/raw/master/img/202403151636160.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">、Struggle</div><div class="author-info__description">工作中遇到的问题记录分享</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">4</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/qwe2539079" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">基本知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">1.1、什么是主从同步？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2%E3%80%81%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">1.2、原理分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3%E3%80%81MySQL%E9%85%8D%E7%BD%AE%E4%B8%BB%E4%BB%8E%E7%9A%84%E7%89%B9%E7%82%B9"><span class="toc-number">1.3.</span> <span class="toc-text">1.3、MySQL配置主从的特点</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%AE%9E%E6%93%8D"><span class="toc-number">2.</span> <span class="toc-text">二、实操</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E8%83%8C%E6%99%AF"><span class="toc-number">2.1.</span> <span class="toc-text">环境背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E6%8F%90%E5%87%86%E5%A4%87"><span class="toc-number">2.2.</span> <span class="toc-text">前提准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E6%80%9D%E8%B7%AF"><span class="toc-number">2.3.</span> <span class="toc-text">主从同步思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E4%B8%BB%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%9B%E8%A1%8C%E9%85%8D%E7%BD%AE"><span class="toc-number">2.4.</span> <span class="toc-text">1、主从服务器进行配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E"><span class="toc-number">2.4.1.</span> <span class="toc-text">配置说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%AE%BE%E7%BD%AE%E8%BF%87%E6%BB%A4%E6%9D%A1%E4%BB%B6"><span class="toc-number">2.4.2.</span> <span class="toc-text">动态设置过滤条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E5%A4%8D%E5%88%B6%E8%BF%87%E6%BB%A4%EF%BC%8C%E6%9C%89%E5%87%A0%E7%82%B9%E9%9C%80%E8%A6%81%E9%A2%9D%E5%A4%96%E6%B3%A8%E6%84%8F%EF%BC%9A"><span class="toc-number">2.4.3.</span> <span class="toc-text">关于复制过滤，有几点需要额外注意：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E4%B8%BB%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%88%9B%E5%BB%BA%E7%94%A8%E6%88%B7%E8%B4%A6%E5%8F%B7-%E7%94%A8%E4%BA%8E%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AE%A2%E9%98%85"><span class="toc-number">2.5.</span> <span class="toc-text">2、主服务器创建用户账号(用于从服务器订阅)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E9%85%8D%E7%BD%AE%E4%BB%8E%E5%BA%93%E4%BF%A1%E6%81%AF-%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">2.6.</span> <span class="toc-text">3、配置从库信息(从服务器数据库)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E6%95%88%E6%9E%9C%E6%BC%94%E7%A4%BA"><span class="toc-number">2.7.</span> <span class="toc-text">主从同步效果演示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%B0%8F%E6%B3%A8%E6%84%8F%E7%82%B9"><span class="toc-number">2.8.</span> <span class="toc-text">主从小注意点</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E9%97%AE%E9%A2%98%EF%BC%9Ashow-slave-status%E6%97%B6%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84slave-IO-running%E4%B8%BAno"><span class="toc-number">3.</span> <span class="toc-text">三、问题：show slave status时从服务器的slave_IO_running为no</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%9E%90%E9%97%AE%E9%A2%98"><span class="toc-number">3.1.</span> <span class="toc-text">分析问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%99%E8%AF%AF1%EF%BC%9Aslave-failed-to-initalize-relay-log-info-structure"><span class="toc-number">3.2.</span> <span class="toc-text">错误1：slave failed to initalize relay log info structure</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%99%E8%AF%AF2%EF%BC%9AFatal-error-The-slave-I-O-thread-stops-because-master-and-slave-have-equal-MySQL-server-UUIDs-these-UUIDs-must-be-different-for-replication-to-work"><span class="toc-number">3.3.</span> <span class="toc-text">错误2：Fatal error: The slave I&#x2F;O thread stops because master and slave have equal MySQL server UUIDs; these UUIDs must be different for replication to work.</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%99%E8%AF%AF3%EF%BC%9AMySQL-Master-command-COM-REGISTER-SLAVE-failed-Access-denied-for-user"><span class="toc-number">3.4.</span> <span class="toc-text">错误3：MySQL Master command COM_REGISTER_SLAVE failed: Access denied for user</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/15/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/Docker%E4%B8%ADMysql%E8%BF%9E%E6%8E%A5%E5%BE%88%E6%85%A2%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/" title="Docker中Mysql连接很慢问题解决">Docker中Mysql连接很慢问题解决</a><time datetime="2024-03-15T07:38:46.613Z" title="发表于 2024-03-15 15:38:46">2024-03-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/15/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/MySQL%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E9%85%8D%E7%BD%AE/" title="MySQL主从同步配置">MySQL主从同步配置</a><time datetime="2024-03-15T07:01:01.941Z" title="发表于 2024-03-15 15:01:01">2024-03-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/15/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/MySQL%E6%9C%8D%E5%8A%A1%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" title="MySQL服务性能优化">MySQL服务性能优化</a><time datetime="2024-03-15T06:53:36.855Z" title="发表于 2024-03-15 14:53:36">2024-03-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/11/Ubuntu22.04%20%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP/" title="Ubuntu22.04 配置静态IP">Ubuntu22.04 配置静态IP</a><time datetime="2024-03-11T09:10:44.923Z" title="发表于 2024-03-11 17:10:44">2024-03-11</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By 、Struggle</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
