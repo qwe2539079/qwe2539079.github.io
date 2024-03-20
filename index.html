@@ -54,7 +54,7 @@
   isHome: true,
   isHighlightShrink: false,
   isToc: false,
-  postUpdate: '2024-03-20 14:15:06'
+  postUpdate: '2024-03-20 15:06:36'
 }</script><script>(win=>{
       win.saveToLocal = {
         set: (key, value, ttl) => {
@@ -172,107 +172,151 @@
     document.addEventListener('pjax:send', () => { preloader.initLoading() })
     document.addEventListener('pjax:complete', () => { preloader.endLoading() })
   }
-})()</script><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://gitee.com/qwe2539079/images/raw/master/img/202403151636160.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">4</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header" style="background-image: url('/img/banner/01.png')"><nav id="nav"><span id="blog-info"><a href="/" title="、Struggle"></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="site-info"><h1 id="site-title">、Struggle</h1><div id="site_social_icons"><a class="social-icon" href="https://github.com/qwe2539079" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/15/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/Docker%E4%B8%ADMysql%E8%BF%9E%E6%8E%A5%E5%BE%88%E6%85%A2%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/" title="Docker中Mysql连接很慢问题解决">Docker中Mysql连接很慢问题解决</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-15T07:38:46.613Z" title="发表于 2024-03-15 15:38:46">2024-03-15</time></span></div><div class="content">问题描述内网Docker中安装了Mysql，在使用连接工具进行连接时，发现连接很慢（十几秒左右）。
-原因分析查阅相关资料得知，由于mysql对连接的客户端进行DNS反向解析。
-
-当一个新线程连接到mysqld时，mysqld将产生一个新线程来处理请求。此线程将首先检查主机名是否在主机名缓存中。否则线程将调用gethostbyaddr()和gethostbyname()来解析主机名。
-
-
-如果操作系统不支持上述线程安全调用，线程将锁定一个互斥锁，并改为调用gethostbyaddr（）和gethostbyname（）。请注意，在这种情况下，在第一个线程准备就绪之前，没有其他线程可以解析主机名缓存中没有的其他主机名。
-
-
-您可以通过使用–skip name resolve启动mysqld来禁用DNS主机查找。在这种情况下，您只能在MySQL特权表中使用IP名称。
+})()</script><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://gitee.com/qwe2539079/images/raw/master/img/202403151636160.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">17</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header" style="background-image: url('/img/banner/01.png')"><nav id="nav"><span id="blog-info"><a href="/" title="、Struggle"></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="site-info"><h1 id="site-title">、Struggle</h1><div id="site_social_icons"><a class="social-icon" href="https://github.com/qwe2539079" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/8c17e57e/" title="lsyncd实现同步">lsyncd实现同步</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-20T07:03:36.610Z" title="发表于 2024-03-20 15:03:36">2024-03-20</time></span></div><div class="content">参考文档地址：https://www.kancloud.cn/hiyang/linux/390195
+地址：https://www.bilibili.com/read/cv15403923
+地址：https://linux.cn/article-5849-1.html
+lsyncd介绍官方地址：https://github.com/lsyncd/lsyncd
+软件介绍
+Lysncd 实际上是lua语言封装了inotify和rsync工具,采用了Linux内核(2.6.13及以后)里的inotify触发机制,然后通过rsync去差异同步,达到实时的效果.
 
 
-如果您有一个非常慢的DNS和许多主机，您可以通过使用–skip name resolve禁用DNS lookop或通过增加主机缓存大小define（默认值：128）并重新编译mysqld来获得更高的性能。
-
-这里我推断，由于d ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/15/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/MySQL%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E9%85%8D%E7%BD%AE/" title="MySQL主从同步配置">MySQL主从同步配置</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-15T07:01:01.941Z" title="发表于 2024-03-15 15:01:01">2024-03-15</time></span></div><div class="content">基本知识为什么要使用主从同步？若是你的项目只有一个数据库，一旦数据库宕机，导致业务停顿就会产生很大的危害，就会出现单点问题。为了让系统高可用，避免单点问题就可以使用主从方式，采用一主多从的方法，主从之间进行数据同步。
-
-单点问题：系统中出现一点失效，就会让整个系统无法运作部件。单点故障会造成整体故障。
-
-实际举例：负载均衡描述：例如来了10000个请求，其中有1000个写请求，有9000个读请求，将写请求分配到主服务器进行写操作，将其他9000个读请求均衡分布给多个从服务器进行读。
+它最令人称道的特性是,完美解决了inotify + rsync海量文件同步带来的文件频繁发送文件列表的问题 —— 通过时间延迟或累计触发事件次数实现.
 
 
-扩展：主从方式另一个目的是进行读写分离，让主服务器数据库进行更新操作即写，查询操作交由从服务器数据库进行！
-
-1.1、什么是主从同步？主：master
-从：slave
-解释：一台服务器充当主服务器，一条及以上服务器充当从服务器。主数据库的数据会自动复制到从服务器中(一旦主机有更新操作，从机就能够立马感知，并且从主机上将数据复制下来 )。
-针对于多级复制，服务器既可充当主服务器也可充当从服务器。
-主从复制的基础就是主服务器对数据进行修改记录二进制文件，从服务器根据主服务器的二进制文件来进行同步更新操作。
- ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/15/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/MySQL%E6%9C%8D%E5%8A%A1%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" title="MySQL服务性能优化">MySQL服务性能优化</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-15T06:53:36.855Z" title="发表于 2024-03-15 14:53:36">2024-03-15</time></span></div><div class="content">
+另外,它的配置方式很简单,lua本身就是一种配置语言,可读性非常强.lsyncd也有多种工作模式可以选择,本地目录cp,本地目录rsync,远程目录rsyncssh.
 
 
-参数名称&#x2F;内存大小（GB）
-1~2
-2~4
-4~8
-8~16
-16~32
+实现简单高效的本地目录同步备份(网络存储挂载也当作本地目录),一个命令搞定.
+
+lsyncd实战lsyncd ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/d20e2df4/" title="服务器免密登录设置">服务器免密登录设置</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-20T07:02:28.145Z" title="发表于 2024-03-20 15:02:28">2024-03-20</time></span></div><div class="content">生成 SSH 秘钥1ssh-keygen -t rsa
 
 
 
-key_buffer_size用于索引的缓冲区大小（MB）
-128
-256
-384
-512
-1024
+中途需要输入的选项，直接默认值回车即可。
+默认在用户目录&#x2F;.ssh 目录下，如下：
+12345Mode LastWriteTime Length Name---- ------------- ------ -----a---- 2018/7/16 18:25 1675 id_rsa-a---- 2018/7/16 18:25 394 id_rsa.pub-a---- 2020/5/9 9:50 3328 known_hosts
+
+CentOS 配置检查服务器是否有以下目录和文件，如果没有就创建
+12mkdir ~/.sshtouch ~/.ssh/authorized_keys
+
+上传刚才生成的公钥文件到 CentOS 并追加内容到 authorized_keys
+123scp .\id_rsa.pub souco@192.168.0.2:~/cat ~/id_rsa.pub &gt;&gt; ~/.ssh/authorized_keysrm ~/id_rsa.pub
+
+重启 ssh 服务1systemctl re ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/afdff273/" title="Portainer-ce安装说明">Portainer-ce安装说明</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-20T07:01:50.778Z" title="发表于 2024-03-20 15:01:50">2024-03-20</time></span></div><div class="content">https://blog.csdn.net/youlinhuanyan/article/details/113814285
+系统环境Linux Ubuntu 16.04.6 LTS
+Docker环境12docker -vDocker version 20.10.3, build 48d30b5
+
+portainer版本portainer.io 2.1.1
+1.安装拉取portainer-ce镜像(portainer&#x2F;portainer&#x2F;portainer已被抛弃)
+1docker pull portainer/portainer-ce
+
+创建一个数据卷
+1docker volume create portainer_data
+
+启动portainer容器
+1docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/port ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/214bdb23/" title="Docker部署geoserver">Docker部署geoserver</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-20T07:01:23.690Z" title="发表于 2024-03-20 15:01:23">2024-03-20</time></span></div><div class="content">参考镜像kartoza&#x2F;docker-geoserver
+拉取镜像1docker pull kartoza/geoserver
+
+启动容器1234567docker run --name geoserver \-p 8080:8080 \--restart=always \-e SAMPLE_DATA=true \-e GEOSERVER_ADMIN_USER=admin \-e GEOSERVER_ADMIN_PASSWORD=geoserver \-d kartoza/geoserver
+
+解释123456789101112131415# 容器名称docker run --name geoserver \# 将主机8080端口映射到容器8080端口-p 8080:8080 \# 重启自启动--restart=always \# 启用示例数据-e SAMPLE_DATA=true \# 用户名-e GEOSERVER_ADMIN_USER=admin \# 密码-e GEOSERVER_ADMIN_PASSWORD=geoserver \# 后台运行-d kartoza/g ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/aed12a4e/" title="docker的_var_lib_docker目录迁移">docker的_var_lib_docker目录迁移</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-20T07:00:46.018Z" title="发表于 2024-03-20 15:00:46">2024-03-20</time></span></div><div class="content">停止docker服务
+systemctl stop docker
+
+创建新的docker目录
+mkdir -p &#x2F;www&#x2F;server&#x2F;docker
+
+迁移&#x2F;var&#x2F;lib&#x2F;docker
+rsync -avz &#x2F;var&#x2F;lib&#x2F;docker &#x2F;www&#x2F;server&#x2F;docker
+
+修改配置路径方法1：通过建立软连接，把&#x2F;var&#x2F;lib&#x2F;docker 移动到其他地方，建立到这里的软连接
+
+ln  -s &#x2F;www&#x2F;server&#x2F;docker &#x2F;var&#x2F;lib&#x2F;docker
+
+方法2：修改默认配置文件&#x2F;etc&#x2F;docker&#x2F;daemon.json
+12345&#123;  &quot;registry-mirrors&quot;: [&quot;http://hub-mirror.c.163.com&quot;],  &quot;graph&quot;:& ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/d32db2c0/" title="CentOS安装supervisor详细教程">CentOS安装supervisor详细教程</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-20T06:59:45.446Z" title="发表于 2024-03-20 14:59:45">2024-03-20</time></span></div><div class="content">名词解释
+supervisor：要安装的软件的名称。
 
 
-query_cache_size查询缓存,不开启请设为0（MB）
-64
-128
-192
-256
-384
+supervisord：装好supervisor软件后，supervisord用于启动supervisor服务。
 
 
-tmp_table_size临时表缓存大小（MB）
-64
-384
-512
-1024
-2048
+supervisorctl：用于管理supervisor配置中的program。
+
+安装supervisor使用yum命令安装
+123456789$ sudo su - #切换为root用户# yum install epel-release# yum install -y supervisor# systemctl enable supervisord # 开机自启动# systemctl start supervisord # 启动supervisord服务# systemctl status supervisord # 查看supervisord服务状态# ps -ef|grep supervisord # 查看是否存在supervisord进程
+
+配置supervisorsupervisord 的配置文件位置
+1$ vim /etc/supervisord.conf
+
+supervisord 的配置文件： ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/0/" title="nssm详解">nssm详解</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-20T06:58:59.517Z" title="发表于 2024-03-20 14:58:59">2024-03-20</time></span></div><div class="content">一、nssm简介nssm是一个服务封装程序，它可以将普通exe程序封装成服务，实现开机自启动，同类型的工具还有微软自己的srvany，不过nssm更加简单易用，并且功能强大。
+它的特点如下：
+
+支持普通exe程序（控制台程序或者带界面的Windows程序都可以）
+
+安装简单，修改方便
+
+可以自动守护封装了的服务，程序挂掉了后可以自动重启
 
 
-innodb_buffer_pool_sizeInnodb缓冲区大小（MB）
-256
-384
-512
-1024
-4096
+官网地址：https://nssm.cc/
+二、nssm配置详解1、下载地址官网地址：https://nssm.cc/download
+百度网盘：https://pan.baidu.com/s/12J0jJF9_7-bstH1eGMI8Lg?pwd=1234
+2、解压压缩包，根据系统位数选择64或32位程序
+
+3、打开命令行，运行nssm程序管理员权限打开命令行工具，切换到nssm.exe所在路径，运行 nssm install，打开程序配置界面
+
+配置项说明：
+
+Path：运行应用程序的程序
+
+Startup directory：应用程序所在的目录
+
+Arguments：应用运行的参数
+
+Service name：生成服务的名称
 
 
-innodb_log_buffer_sizeInnodb日志缓冲区大小（MB）
-128
-128
-128
-128
-128
+最后点击in ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/db416d44/" title="CentOS 8 中配置阿里云的 yum 源">CentOS 8 中配置阿里云的 yum 源</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-20T06:57:38.501Z" title="发表于 2024-03-20 14:57:38">2024-03-20</time></span></div><div class="content">
+备份当前 yum 源配置文件
+
+进入 /dev/yum.repos.d 目录将该目录下的源配置文件备份：
+has123[root@localhost ~]# cd /etc/yum.repos.d/[root@localhost yum.repos.d]# mkdir bk/[root@localhost yum.repos.d]# mv * bk/
+
+2. 下载源配置文件使用 wget 命令从阿里云下载对应系统的镜像源，这里笔者的是 CentOS 8。
+has1wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-8.repo
+
+输出如下（看到下载 100% 则说明没问题）：
+has12345678910--2022-11-27 20:27:27--  http://mirrors.aliyun.com/repo/Centos-8.repo正在解析主机 mirrors.aliyun.com (mirrors.aliyun.com)... 39.173.101.99, 39.17 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/4c7e0b6/" title="CentOS8 安装 Docker">CentOS8 安装 Docker</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-20T06:57:01.564Z" title="发表于 2024-03-20 14:57:01">2024-03-20</time></span></div><div class="content">镜像下载、域名解析、时间同步请点击 阿里巴巴开源镜像站
+一、安装前说明以下操作都是在root用户执行，如果出现containerd.io版本过低或者podman-manpages冲突问题请参照最下方解决方案进行。
+二、安装过程1. 卸载老版本12345678yum remove docker \                  docker-client \                  docker-client-latest \                  docker-common \                  docker-latest \                  docker-latest-logrotate \                  docker-logrotate \                  docker-engine
 
 
-sort_buffer_size每个线程排序的缓冲大小（KB * 连接数）
-768
-768
-1024
-2048
-4096
+
+2. 安装docker 基础包123yum install -y yum-utils \  device-mapper-persistent-data \  lvm2
 
 
-read_buffer_size读入缓冲区大小（KB * 连接数）
-768
-768
-1024
-2048
-4096
+
+3. 设置稳定仓库123 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/e441f2b0/" title="CentOS 7下安装docker">CentOS 7下安装docker</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-20T06:56:19.357Z" title="发表于 2024-03-20 14:56:19">2024-03-20</time></span></div><div class="content">使用 yum 安装
+Docker 要求 CentOS 系统的内核版本高于 3.10 ，查看本页面的前提条件来验证你的CentOS 版本是否支持 Docker 。
+通过  uname -r  命令查看你当前的内核版本
+1[root@runoob ~]# uname -r 3.10.0-327.el7.x86_64
 
 
-read_rnd_buffer_size随机读取缓冲区大小（KB * 连接数）
-512
-512
-7 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/03/11/Ubuntu22.04%20%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP/" title="Ubuntu22.04 配置静态IP">Ubuntu22.04 配置静态IP</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-03-11T09:10:44.923Z" title="发表于 2024-03-11 17:10:44">2024-03-11</time></span></div><div class="content">1.适用系统本文介绍的静态 ip 的配置方法适用于 Ubuntu 系统的 18.04 及其以上版本。
-2.确认以太网连接的网络接口一般情况下的个人 PC 只会有一张网卡，但在服务器中可能存在多张网卡的情况，使用 ifconfig 命令查看对应 ip 的网络接口。若提示未找到 ifconfig 命令则使用如下命令按装该工具。
-1sudo apt-get install net-tools
-查看需要修改的网卡，如下可以查到当前所有的网络接口信息，由于我的主机只有一块网卡，因此就只对它修改即可。
-123456789101112131415161718$ ifconfigens33: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500        inet 192.168.253.129  netmask 255.255.255.0  broadcast 192.168.253.255        inet6 fe80::bbd9:a68d:6982:fa33  prefixlen 64  scopeid 0x20&lt;l ...</div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://gitee.com/qwe2539079/images/raw/master/img/202403151636160.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">、Struggle</div><div class="author-info__description">工作中遇到的问题记录分享</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">4</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/qwe2539079"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/qwe2539079" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/15/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/Docker%E4%B8%ADMysql%E8%BF%9E%E6%8E%A5%E5%BE%88%E6%85%A2%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/" title="Docker中Mysql连接很慢问题解决">Docker中Mysql连接很慢问题解决</a><time datetime="2024-03-15T07:38:46.613Z" title="发表于 2024-03-15 15:38:46">2024-03-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/15/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/MySQL%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E9%85%8D%E7%BD%AE/" title="MySQL主从同步配置">MySQL主从同步配置</a><time datetime="2024-03-15T07:01:01.941Z" title="发表于 2024-03-15 15:01:01">2024-03-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/15/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/MySQL%E6%9C%8D%E5%8A%A1%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" title="MySQL服务性能优化">MySQL服务性能优化</a><time datetime="2024-03-15T06:53:36.855Z" title="发表于 2024-03-15 14:53:36">2024-03-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/11/Ubuntu22.04%20%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP/" title="Ubuntu22.04 配置静态IP">Ubuntu22.04 配置静态IP</a><time datetime="2024-03-11T09:10:44.923Z" title="发表于 2024-03-11 17:10:44">2024-03-11</time></div></div></div></div><div class="card-widget card-archives"><div class="item-headline"><i class="fas fa-archive"></i><span>归档</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/03/"><span class="card-archive-list-date">三月 2024</span><span class="card-archive-list-count">4</span></a></li></ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">4</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2024-03-20T06:15:06.427Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer" style="background: rgba(0,0,0,0)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By 、Struggle</div><div class="footer_custom_text">人性一个最特别的弱点就是：在意别人如何看待自己。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
+安装 DockerDocker 软件包和依赖包已经包含在默认的 CentOS-Extras 软件源里，安装命令如下：
+1[root@runoob ~]# yum -y install docker
+
+
+安装完成。
+
+启动 Docker 后台服务
+1[root@runoob ~]# service docker start
+
+
+测试运行 hello-world
+1[root@runoob ~]#docker run hello-world
+
+
+由于本地没有hello-world这个镜像，所以会下载一个hello-world的镜像，并在容器内运行。
+使用脚本安装 Docker1、使用 sudo 或 root 权限登录 Centos。
+2、确保 yum 包更新到最新。
+1$ su ...</div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span><a class="page-number" href="/page/2/#content-inner">2</a><a class="extend next" rel="next" href="/page/2/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://gitee.com/qwe2539079/images/raw/master/img/202403151636160.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">、Struggle</div><div class="author-info__description">工作中遇到的问题记录分享</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">17</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/qwe2539079"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/qwe2539079" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/8c17e57e/" title="lsyncd实现同步">lsyncd实现同步</a><time datetime="2024-03-20T07:03:36.610Z" title="发表于 2024-03-20 15:03:36">2024-03-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/d20e2df4/" title="服务器免密登录设置">服务器免密登录设置</a><time datetime="2024-03-20T07:02:28.145Z" title="发表于 2024-03-20 15:02:28">2024-03-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/afdff273/" title="Portainer-ce安装说明">Portainer-ce安装说明</a><time datetime="2024-03-20T07:01:50.778Z" title="发表于 2024-03-20 15:01:50">2024-03-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/214bdb23/" title="Docker部署geoserver">Docker部署geoserver</a><time datetime="2024-03-20T07:01:23.690Z" title="发表于 2024-03-20 15:01:23">2024-03-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/aed12a4e/" title="docker的_var_lib_docker目录迁移">docker的_var_lib_docker目录迁移</a><time datetime="2024-03-20T07:00:46.018Z" title="发表于 2024-03-20 15:00:46">2024-03-20</time></div></div></div></div><div class="card-widget card-archives"><div class="item-headline"><i class="fas fa-archive"></i><span>归档</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/03/"><span class="card-archive-list-date">三月 2024</span><span class="card-archive-list-count">17</span></a></li></ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">17</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2024-03-20T07:06:36.367Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer" style="background: rgba(0,0,0,0)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By 、Struggle</div><div class="footer_custom_text">人性一个最特别的弱点就是：在意别人如何看待自己。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

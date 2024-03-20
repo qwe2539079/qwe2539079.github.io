@@ -1,0 +1,207 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Linux挂载新磁盘到根目录/ | 、Struggle</title><meta name="author" content="、Struggle"><meta name="copyright" content="、Struggle"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="referrer" content="no-referrer"><meta name="description" content="Linux挂载新磁盘到根目录&#x2F; 1、添加磁盘到需要挂载的机器上 2、lsblk查看硬盘挂载情况，sdb,sdc为我新挂载的磁盘  3、fdisk -l查看挂载之前的分区情况，  4、为新硬盘创建分区 fdisk &#x2F;dev&#x2F;sdb，终端会提示：Command （m for help）：输入：n依次输入p 和 1接着便会提示卷的起始地址和结束地址，都保持默认按回车的即可（意思是只分一个区）输">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux挂载新磁盘到根目录&#x2F;">
+<meta property="og:url" content="https://qwe2539079.github.io/posts/c9ade02d/index.html">
+<meta property="og:site_name" content="、Struggle">
+<meta property="og:description" content="Linux挂载新磁盘到根目录&#x2F; 1、添加磁盘到需要挂载的机器上 2、lsblk查看硬盘挂载情况，sdb,sdc为我新挂载的磁盘  3、fdisk -l查看挂载之前的分区情况，  4、为新硬盘创建分区 fdisk &#x2F;dev&#x2F;sdb，终端会提示：Command （m for help）：输入：n依次输入p 和 1接着便会提示卷的起始地址和结束地址，都保持默认按回车的即可（意思是只分一个区）输">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/qwe2539079/images/raw/master/img/202403151636160.jpg">
+<meta property="article:published_time" content="2024-03-20T06:52:57.558Z">
+<meta property="article:modified_time" content="2024-03-20T07:06:03.456Z">
+<meta property="article:author" content="、Struggle">
+<meta property="article:tag" content="开发、技术分享、Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/qwe2539079/images/raw/master/img/202403151636160.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://qwe2539079.github.io/posts/c9ade02d/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Linux挂载新磁盘到根目录/',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2024-03-20 15:06:03'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load',() => { preloader.endLoading() })
+
+  if (false) {
+    document.addEventListener('pjax:send', () => { preloader.initLoading() })
+    document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+  }
+})()</script><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://gitee.com/qwe2539079/images/raw/master/img/202403151636160.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">17</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/banner/01.png')"><nav id="nav"><span id="blog-info"><a href="/" title="、Struggle"></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Linux挂载新磁盘到根目录/</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-03-20T06:52:57.558Z" title="发表于 2024-03-20 14:52:57">2024-03-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-03-20T07:06:03.456Z" title="更新于 2024-03-20 15:06:03">2024-03-20</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Linux挂载新磁盘到根目录/"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>Linux挂载新磁盘到根目录&#x2F;</p>
+<p>1、添加磁盘到需要挂载的机器上</p>
+<p>2、<code>lsblk</code>查看硬盘挂载情况，sdb,sdc为我新挂载的磁盘</p>
+<p><img src="https://tcs.teambition.net/storage/312paad178202df5c1e1bd445ca843c87088?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9hcHBJZCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTUyMjMyNSwiaWF0IjoxNzEwOTE3NTI1LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzMxMnBhYWQxNzgyMDJkZjVjMWUxYmQ0NDVjYTg0M2M4NzA4OCJ9.-QGq9_ExMbdZW86qvWe1oj0VE5t63eEKHOFxv28ZRuo&download=image.png"></p>
+<p>3、<code>fdisk -l</code>查看挂载之前的分区情况，</p>
+<p><img src="https://tcs.teambition.net/storage/312p0ee1199e2879d620508fa7d8d1a72883?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9hcHBJZCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTUyMjMyNSwiaWF0IjoxNzEwOTE3NTI1LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzMxMnAwZWUxMTk5ZTI4NzlkNjIwNTA4ZmE3ZDhkMWE3Mjg4MyJ9.yj9NkHxg37Yni6cR6idp0FuZYxDT1A-ZUq-q7mcEw2I&download=image.png"></p>
+<p>4、为新硬盘创建分区 <code>fdisk /dev/sdb</code>，终端会提示：Command （m for help）：输入：n依次输入p 和 1接着便会提示卷的起始地址和结束地址，都保持默认按回车的即可（意思是只分一个区）输入“w”保存并推出</p>
+<p><img src="https://tcs.teambition.net/storage/312p104e792d01c93acd5567873f3206e811?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9hcHBJZCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTUyMjMyNSwiaWF0IjoxNzEwOTE3NTI1LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzMxMnAxMDRlNzkyZDAxYzkzYWNkNTU2Nzg3M2YzMjA2ZTgxMSJ9.KI2_OvxZ5ye3hPjsRus-1A_IK27Zsccaz8_-LZc7Rpo&download=image.png"></p>
+<p>5、再次使用<code>fdisk -l</code>查看 ， 出现了 &#x2F;dev&#x2F;sdb1，说明分区工作完成</p>
+<p><img src="https://tcs.teambition.net/storage/312p4f1bd20febf08b4cdb44a862d098b9b8?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9hcHBJZCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTUyMjMyNSwiaWF0IjoxNzEwOTE3NTI1LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzMxMnA0ZjFiZDIwZmViZjA4YjRjZGI0NGE4NjJkMDk4YjliOCJ9.ifvCOe03MLvPHBblA4-oR4sFTPtFWniVrAuU_y3cop0&download=image.png"></p>
+<p>6、<code>mkfs -t ext3 /dev/sdb1</code>对新区进行格式化</p>
+<p><img src="https://tcs.teambition.net/storage/312p1701fa47e933ad8da395c6303fe86122?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9hcHBJZCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTUyMjMyNSwiaWF0IjoxNzEwOTE3NTI1LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzMxMnAxNzAxZmE0N2U5MzNhZDhkYTM5NWM2MzAzZmU4NjEyMiJ9.0hrzqHAMDQRzxPj382-diD4KLi4ef9r_pAnapB8DFII&download=image.png"></p>
+<p>7、<code>lsblk</code> 列出所有可用设备块信息</p>
+<p><img src="https://tcs.teambition.net/storage/312p091c695b0f54da22bea45694b21d665d?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9hcHBJZCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTUyMjMyNSwiaWF0IjoxNzEwOTE3NTI1LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzMxMnAwOTFjNjk1YjBmNTRkYTIyYmVhNDU2OTRiMjFkNjY1ZCJ9.SDROQHM_-ao17pWBOwTs3RoUlc_7sSW03s1zc4xnvis&download=image.png"></p>
+<p>8、<code>vgdisplay -v</code> 查看卷分组</p>
+<p><img src="https://tcs.teambition.net/storage/312p0d406e79babe7de20924a667aadbb8b0?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9hcHBJZCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTUyMjMyNSwiaWF0IjoxNzEwOTE3NTI1LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzMxMnAwZDQwNmU3OWJhYmU3ZGUyMDkyNGE2NjdhYWRiYjhiMCJ9.-WUjTcmBU4roQTuXepvkxfN58NDRhi41Q9hRhONnhRw&download=image.png"></p>
+<p>9、<code>pvcreate /dev/sdb1</code> 创建物理卷</p>
+<p><img src="https://tcs.teambition.net/storage/312pefcea9c17431a72826fa4f07c80fd6d3?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9hcHBJZCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTUyMjMyNSwiaWF0IjoxNzEwOTE3NTI1LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzMxMnBlZmNlYTljMTc0MzFhNzI4MjZmYTRmMDdjODBmZDZkMyJ9.4sy9aDUn2OIIDYPdgc70U7DhHxT_kwHvDk_uT6PY-Ms&download=image.png"></p>
+<p>10、<code>pvdisplay</code>查看创建结果</p>
+<p><img src="https://tcs.teambition.net/storage/312p63d2417e0fff99ce9d47a77d651e76ef?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9hcHBJZCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTUyMjMyNSwiaWF0IjoxNzEwOTE3NTI1LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzMxMnA2M2QyNDE3ZTBmZmY5OWNlOWQ0N2E3N2Q2NTFlNzZlZiJ9.rBzBUrJ8Xzmc462HSxZGynNMEm-YXDxX5vlTJDkQ7HI&download=image.png"></p>
+<p>11、<code>vgextend centos /dev/sdb1</code>扩展卷分组，其中<code>centos</code> 是第8步中的VG Name</p>
+<p><img src="https://tcs.teambition.net/storage/312p49f254a1e9496d364990991a3f6e079f?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9hcHBJZCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTUyMjMyNSwiaWF0IjoxNzEwOTE3NTI1LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzMxMnA0OWYyNTRhMWU5NDk2ZDM2NDk5MDk5MWEzZjZlMDc5ZiJ9.WYrkyFU9ZQvvcvb8mYidWqDUrgJnUQ-1QFYTSC1XOtE&download=image.png"></p>
+<p>12、<code>lvextend -L +256G /dev/centos/root</code> 扩展逻辑卷</p>
+<p><img src="https://tcs.teambition.net/storage/312p85f1b093a6ec586126a15fdeee6dfece?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9hcHBJZCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTUyMjMyNSwiaWF0IjoxNzEwOTE3NTI1LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzMxMnA4NWYxYjA5M2E2ZWM1ODYxMjZhMTVmZGVlZTZkZmVjZSJ9.w7Py862Hf46QJjGeNb_KxbY-5MehdEYJDtCsJSM3fFM&download=image.png"></p>
+<p>13、<code>df -h</code> 查看挂载情况，不要惊慌，哈哈</p>
+<p><img src="https://tcs.teambition.net/storage/312p13dc6727b3881d4c2c439034a6cb4962?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9hcHBJZCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTUyMjMyNSwiaWF0IjoxNzEwOTE3NTI1LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzMxMnAxM2RjNjcyN2IzODgxZDRjMmM0MzkwMzRhNmNiNDk2MiJ9.GcB5ba52N0T82U0fdY-n_ZpxjbhjdDUomf59gB6-H6g&download=image.png"></p>
+<p>14、<code>xfs_growfs /dev/centos/root</code> 同步文件系统</p>
+<p><img src="https://tcs.teambition.net/storage/312p180ee192246db11bdd9b243d4b19b3ca?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9hcHBJZCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTUyMjMyNSwiaWF0IjoxNzEwOTE3NTI1LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzMxMnAxODBlZTE5MjI0NmRiMTFiZGQ5YjI0M2Q0YjE5YjNjYSJ9.OF3Lc2J_Mmdf_m-D36xTo4Ds_ig4xcjnP2K1w5OGF08&download=image.png"></p>
+<p>15、<code>df -h</code> 再次查看挂载情况，已经欧克了</p>
+<p><img src="https://tcs.teambition.net/storage/312p86ba2ca95953f8c53e3ecd0ed9b9921f?Signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBJRCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9hcHBJZCI6IjU5Mzc3MGZmODM5NjMyMDAyZTAzNThmMSIsIl9vcmdhbml6YXRpb25JZCI6IiIsImV4cCI6MTcxMTUyMjMyNSwiaWF0IjoxNzEwOTE3NTI1LCJyZXNvdXJjZSI6Ii9zdG9yYWdlLzMxMnA4NmJhMmNhOTU5NTNmOGM1M2UzZWNkMGVkOWI5OTIxZiJ9.Do-XzWMiAZ_4QnhFfSZEp8gt570GRVdYb-XIrEcNGCw&download=image.png"></p>
+</article><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/51ef32d0/" title="docker中MySQL的时区修改"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">docker中MySQL的时区修改</div></div></a></div><div class="next-post pull-right"><a href="/posts/339cde8f/" title="解决 Linux /dev/mapper/ubuntu--vg-ubuntu--lv 磁盘空间不足的问题_ubuntu vg 为什么不用满"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">解决 Linux /dev/mapper/ubuntu--vg-ubuntu--lv 磁盘空间不足的问题_ubuntu vg 为什么不用满</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://gitee.com/qwe2539079/images/raw/master/img/202403151636160.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">、Struggle</div><div class="author-info__description">工作中遇到的问题记录分享</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">17</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/qwe2539079"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/qwe2539079" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/8c17e57e/" title="lsyncd实现同步">lsyncd实现同步</a><time datetime="2024-03-20T07:03:36.610Z" title="发表于 2024-03-20 15:03:36">2024-03-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/d20e2df4/" title="服务器免密登录设置">服务器免密登录设置</a><time datetime="2024-03-20T07:02:28.145Z" title="发表于 2024-03-20 15:02:28">2024-03-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/afdff273/" title="Portainer-ce安装说明">Portainer-ce安装说明</a><time datetime="2024-03-20T07:01:50.778Z" title="发表于 2024-03-20 15:01:50">2024-03-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/214bdb23/" title="Docker部署geoserver">Docker部署geoserver</a><time datetime="2024-03-20T07:01:23.690Z" title="发表于 2024-03-20 15:01:23">2024-03-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/aed12a4e/" title="docker的_var_lib_docker目录迁移">docker的_var_lib_docker目录迁移</a><time datetime="2024-03-20T07:00:46.018Z" title="发表于 2024-03-20 15:00:46">2024-03-20</time></div></div></div></div></div></div></main><footer id="footer" style="background: rgba(0,0,0,0)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By 、Struggle</div><div class="footer_custom_text">人性一个最特别的弱点就是：在意别人如何看待自己。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
